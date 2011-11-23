@@ -123,7 +123,7 @@ module Paperclip
       end
       
       def s3_headers
-        @s3_headers = @options.s3_headers
+        @s3_headers = @options[:s3_headers] 
         @s3_headers = @s3_headers.call(self) if @s3_headers.is_a?(Proc)
         @s3_headers.nil? ? {} : @s3_headers
       end
