@@ -135,6 +135,12 @@ module Paperclip
         @bucket = @bucket.call(self) if @bucket.is_a?(Proc)
         @bucket
       end
+      
+      def s3_headers
+        @s3_headers = @options.s3_headers
+        @s3_headers = @s3_headers.call(self) if @s3_headers.is_a?(Proc)
+        @s3_headers.nil? ? {} : @s3_headers
+      end
 
       def using_http_proxy?
         !!@http_proxy
@@ -220,7 +226,7 @@ module Paperclip
                                     bucket_name,
                                     {:content_type => file.content_type.to_s.strip,
                                      :access => s3_permissions(style),
-                                    }.merge(@s3_headers))
+                                    }.merge(s3_headers))
           rescue AWS::S3::NoSuchBucket => e
             create_bucket
             retry
