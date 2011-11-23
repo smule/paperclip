@@ -121,6 +121,12 @@ module Paperclip
       def bucket_name
         @bucket
       end
+      
+      def s3_headers
+        @s3_headers = @options.s3_headers
+        @s3_headers = @s3_headers.call(self) if @s3_headers.is_a?(Proc)
+        @s3_headers.nil? ? {} : @s3_headers
+      end
 
       def s3_host_name 
         @s3_host_name || "s3.amazonaws.com" 
@@ -188,7 +194,7 @@ module Paperclip
                                     bucket_name,
                                     {:content_type => file.content_type.to_s.strip,
                                      :access => (@s3_permissions[style] || @s3_permissions[:default]),
-                                    }.merge(@s3_headers))
+                                    }.merge(s3_headers))
           rescue AWS::S3::NoSuchBucket => e
             create_bucket
             retry
